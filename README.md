@@ -39,7 +39,3 @@ Completing a world unlocks the next one. Your best score and unlocked worlds are
 ## How to Run
 
 Open the game's HTML file in a web browser. An internet connection may be needed for any externally hosted fonts or other linked resources.
-
-## About
-
-Candy Dash was created as a platform game project focused on movement, level progression, and interactive gameplay. It combines colourful environments with increasingly challenging levels as you progress through the game.

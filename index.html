@@ -1,110 +1,92 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CANDY DASH // Sugar Rush</title>
+  <title>Candy Dash — Sugar Worlds</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="ambient ambient-one"></div>
-  <div class="ambient ambient-two"></div>
-
-  <main class="game-shell">
+  <main class="app">
     <header class="topbar">
-      <a class="wordmark" href="#" aria-label="Candy Dash home">
-        <span class="logo-icon">✳</span>
-        <span>CANDY<span class="pink">DASH</span><small>ARCADE EDITION / 001</small></span>
+      <a class="brand" href="#" id="homeBtn">
+        <span class="brand-icon">✳</span>
+        CANDY<span>DASH</span>
       </a>
-
-      <div class="top-status">
-        <span class="live-dot"></span>
-        SUGAR VALLEY <span class="slash">/</span> WORLD 01
+      <div class="top-right">
+        <div class="best-box">BEST <strong id="bestScore">000000</strong></div>
+        <button class="icon-btn" id="soundBtn" aria-label="Toggle sound">♫</button>
       </div>
-
-      <button class="icon-button" id="soundBtn" aria-label="Toggle sound">
-        <span id="soundIcon">♫</span>
-      </button>
     </header>
 
-    <section class="game-stage">
-      <canvas id="game" width="1100" height="620"></canvas>
-
-      <div class="stage-label">
-        <span class="stage-number">01</span>
-        <span>THE CANDY KINGDOM</span>
+    <section class="game-shell">
+      <div class="game-topline">
+        <div>
+          <span class="eyebrow" id="worldEyebrow">YOUR NEXT OBSESSION</span>
+          <h1 id="worldTitle">Sugar Worlds</h1>
+        </div>
+        <div class="world-counter" id="worldCounter">WORLD 01 / 05</div>
       </div>
 
-      <div class="stage-right">
-        <span class="status-dot"></span>
-        <span id="statusText">READY TO PLAY</span>
-      </div>
+      <div class="game-stage">
+        <canvas id="game" width="1100" height="620"></canvas>
 
-      <div class="game-hud" id="gameHud">
-        <div class="hud-card">
-          <span class="hud-label">SCORE</span>
-          <strong id="score">000000</strong>
-        </div>
-        <div class="hud-card candy-card">
-          <span class="hud-label">CANDY</span>
-          <strong><span class="candy-symbol">✳</span> <span id="candyCount">00</span></strong>
-        </div>
-        <div class="hud-card">
-          <span class="hud-label">LIVES</span>
-          <strong class="life-display" id="lives">♥ ♥ ♥</strong>
-        </div>
-        <button class="pause-button" id="pauseBtn" aria-label="Pause game">Ⅱ</button>
-      </div>
-
-      <div class="overlay" id="overlay">
-        <div class="menu-panel">
-          <div class="eyebrow"><span class="live-dot"></span> WELCOME TO SUGAR VALLEY</div>
-          <h1 class="hero-title">CANDY<br><span>DASH</span><span class="title-star">✳</span></h1>
-          <p class="hero-description">A little chaos. A lot of sugar.<br>Your sweetest adventure starts here.</p>
-
-          <div class="menu-stats">
-            <div><span>WORLD</span><strong>01 <i>/ 05</i></strong></div>
-            <div><span>DIFFICULTY</span><strong class="easy">SWEET</strong></div>
-            <div><span>BEST SCORE</span><strong id="bestScore">000000</strong></div>
+        <div class="hud" id="hud">
+          <div class="hud-card">
+            <span class="hud-label">SCORE</span>
+            <strong id="score">000000</strong>
           </div>
+          <div class="hud-card">
+            <span class="hud-label">CANDIES</span>
+            <strong id="candyCount">00</strong>
+          </div>
+          <div class="hud-card">
+            <span class="hud-label">HEARTS</span>
+            <strong id="lives">♥ ♥ ♥</strong>
+          </div>
+        </div>
 
-          <button class="primary-button" id="playBtn">
-            <span>START YOUR ADVENTURE</span><span class="button-arrow">↗</span>
-          </button>
+        <div class="toast" id="toast"></div>
 
-          <button class="secondary-button" id="howBtn">HOW TO PLAY <span>＋</span></button>
-
-          <div class="menu-footer">
-            <span>DESIGNED FOR THE SUGAR-OBSESSED</span>
-            <span>EST. 2026</span>
+        <div class="overlay" id="overlay">
+          <div class="menu-panel">
+            <div class="eyebrow">WELCOME TO SUGAR VALLEY</div>
+            <h2 class="hero-title">CANDY<br><span>DASH ✳</span></h2>
+            <p class="hero-description">A little chaos. A lot of sugar.<br>Your sweetest adventure starts here.</p>
+            <button class="primary-button" id="startBtn">
+              START YOUR ADVENTURE <span>↗</span>
+            </button>
+            <p class="tiny-note">FIVE WORLDS · FOUR CHARACTERS · ONE SWEET TOAD</p>
           </div>
         </div>
       </div>
 
-      <div class="toast" id="toast"></div>
+      <div class="game-footer">
+        <div class="controls-hint">
+          <span><kbd>A</kbd><kbd>D</kbd> MOVE</span>
+          <span><kbd>SPACE</kbd> JUMP</span>
+          <span><kbd>SHIFT</kbd> DASH</span>
+          <span><kbd>ESC</kbd> PAUSE</span>
+        </div>
+        <div class="status" id="statusText">READY TO PLAY</div>
+      </div>
 
       <div class="mobile-controls">
         <button id="leftBtn" aria-label="Move left">←</button>
         <button id="rightBtn" aria-label="Move right">→</button>
-        <button id="jumpBtn">JUMP ↑</button>
-        <button id="dashBtn">DASH ↗</button>
+        <button id="jumpBtn" aria-label="Jump">JUMP</button>
+        <button id="dashBtn" aria-label="Dash">DASH</button>
       </div>
     </section>
 
-    <footer class="bottom-bar">
-      <div class="bottom-brand"><span>✳</span> SWEETNESS OVERLOAD</div>
-      <div class="control-legend">
-        <span><kbd>A</kbd><kbd>D</kbd> MOVE</span>
-        <span><kbd>SPACE</kbd> JUMP</span>
-        <span><kbd>SHIFT</kbd> DASH</span>
-        <span><kbd>ESC</kbd> PAUSE</span>
-      </div>
-      <div class="version">CANDY ENGINE <span>V1.0.0</span></div>
+    <footer class="page-footer">
+      <span>MADE OF SUGAR, POWERED BY CHAOS.</span>
+      <span>© CANDY DASH 2026</span>
     </footer>
   </main>
-
   <script src="script.js"></script>
 </body>
 </html>

@@ -38,7 +38,6 @@
   let toastTime = 0;
   let soundOn = true;
   let audio = null;
-
   let platforms = [];
   let candies = [];
   let enemies = [];
@@ -67,14 +66,18 @@
 
   function sound(freq = 600, duration = .08) {
     if (!soundOn) return;
+
     try {
       audio ||= new (window.AudioContext || window.webkitAudioContext)();
       if (audio.state === "suspended") audio.resume();
+
       const osc = audio.createOscillator();
       const gain = audio.createGain();
+
       osc.frequency.value = freq;
       gain.gain.setValueAtTime(.035, audio.currentTime);
       gain.gain.exponentialRampToValueAtTime(.001, audio.currentTime + duration);
+
       osc.connect(gain);
       gain.connect(audio.destination);
       osc.start();
@@ -99,6 +102,7 @@
     for (let i = 0; i < amount; i++) {
       const angle = rand(0, Math.PI * 2);
       const speed = rand(60, 240);
+
       particles.push({
         x, y,
         vx: Math.cos(angle) * speed,
@@ -114,9 +118,14 @@
 
   function floatText(x, y, text, color = "#fff") {
     particles.push({
-      x, y, vx: 0, vy: -45,
-      life: .9, max: .9, size: 0,
-      color, text
+      x, y,
+      vx: 0,
+      vy: -45,
+      life: .9,
+      max: .9,
+      size: 0,
+      color,
+      text
     });
   }
 
@@ -125,8 +134,7 @@
     $("candyCount").textContent = String(candyCount).padStart(2, "0");
     $("lives").textContent = lives > 0 ? "♥ ".repeat(lives).trim() : "0";
     $("bestScore").textContent = String(best).padStart(6, "0");
-    $("worldCounter").textContent =
-      `WORLD ${String(worldIndex + 1).padStart(2, "0")} / 05`;
+    $("worldCounter").textContent = `WORLD ${String(worldIndex + 1).padStart(2, "0")} / 05`;
     $("worldTitle").textContent = world().name;
     $("worldEyebrow").textContent = `${world().difficulty} · ${world().theme.toUpperCase()} WORLD`;
   }
@@ -153,6 +161,7 @@
 
   function showMenu(title, description, content, buttons, eyebrow = "CANDY DASH") {
     const overlay = $("overlay");
+
     overlay.innerHTML = `
       <div class="menu-panel">
         <div class="eyebrow">${eyebrow}</div>
@@ -201,6 +210,7 @@
 
   function instructions() {
     mode = "instructions";
+
     showMenu(
       "HOW TO<br><span>PLAY</span>",
       "Move with A and D or the arrow keys. Press SPACE to jump and jump again to double-jump. SHIFT gives you a dash. Collect candies, avoid monsters, and reach the flag. Each world gets harder!",
@@ -249,6 +259,7 @@
     mode = "levels";
 
     const icons = ["🍭", "🍄", "❄️", "⚡", "🍫"];
+
     const backgrounds = [
       "linear-gradient(140deg,#ff70bd,#63338b)",
       "linear-gradient(140deg,#6d56a8,#192f45)",
@@ -259,12 +270,16 @@
 
     const cards = worlds.map((w, i) => {
       const locked = i + 1 > unlocked;
+
       return `<button class="level-card ${locked ? "locked" : ""} ${i === selectedWorld ? "selected" : ""}" data-world="${i}" ${locked ? "disabled" : ""}>
         <span class="level-number">WORLD 0${i + 1}${locked ? " · LOCKED" : ""}</span>
         <div class="level-art" style="background:${backgrounds[i]}"><span>${icons[i]}</span></div>
         <div class="level-info">
           <span class="level-name">${w.name}</span>
-          <div class="level-meta"><span class="difficulty">${w.difficulty}</span><span>${locked ? "LOCKED" : "PLAYABLE"}</span></div>
+          <div class="level-meta">
+            <span class="difficulty">${w.difficulty}</span>
+            <span>${locked ? "LOCKED" : "PLAYABLE"}</span>
+          </div>
         </div>
       </button>`;
     }).join("");
@@ -293,8 +308,8 @@
 
   function addPlatform(x, y, w, moving = false) {
     platforms.push({
-      x, y, w, h: 25,
-      moving, baseY: y,
+      x, y, w, h: 25, moving,
+      baseY: y,
       phase: rand(0, 6),
       speed: rand(35, 80)
     });
@@ -308,9 +323,8 @@
     decorations = [];
 
     const w = world();
-    levelWidth = 1200 + w.count * 205;
+    levelWidth = 4000;
 
-    // A wide, safe starting platform so the character is visible immediately.
     addPlatform(0, 510, 470);
 
     let x = 400;
@@ -320,6 +334,7 @@
 
       const y = clamp(440 - (i % 3) * 36 + rand(-12, 12), 300, 460);
       const width = rand(130, worldIndex >= 3 ? 175 : 205);
+
       addPlatform(x, y, width, worldIndex >= 1 && i % (worldIndex >= 3 ? 2 : 4) === 1);
 
       for (let j = 0; j < 3; j++) {
@@ -334,23 +349,43 @@
 
       if (i % 2 === 0 || (worldIndex >= 2 && i % 3 === 0)) {
         enemies.push({
-          x: x + 30, y: y - 31, w: 32, h: 29,
-          min: x + 3, max: x + width - 34,
+          x: x + 30,
+          y: y - 31,
+          w: 32,
+          h: 29,
+          min: x + 3,
+          max: x + width - 34,
           speed: (55 + worldIndex * 25) * w.speed,
-          dir: 1, alive: true, phase: rand(0, 6)
+          dir: 1,
+          alive: true,
+          phase: rand(0, 6)
         });
       }
     }
 
-    addPlatform(levelWidth - 260, 455, 290);
-    goal = { x: levelWidth - 130, y: 330 };
+    // Place the finish after the final generated platform.
+    const lastPlatform = platforms[platforms.length - 1];
+    const finishX = lastPlatform.x + lastPlatform.w + 45;
+
+    addPlatform(finishX, 455, 360);
+
+    levelWidth = finishX + 400;
+    goal = { x: finishX + 235, y: 305 };
 
     if (worldIndex === 4) {
       enemies.push({
-        x: levelWidth - 390, y: 390, w: 72, h: 65,
-        min: levelWidth - 490, max: levelWidth - 250,
-        speed: 95, dir: 1, alive: true, phase: 0,
-        boss: true, hp: 3
+        x: finishX + 45,
+        y: 390,
+        w: 72,
+        h: 65,
+        min: finishX + 5,
+        max: finishX + 210,
+        speed: 95,
+        dir: 1,
+        alive: true,
+        phase: 0,
+        boss: true,
+        hp: 3
       });
     }
 
@@ -393,6 +428,7 @@
     toastTime = 0;
 
     mode = "playing";
+
     $("hud").style.display = "flex";
     $("overlay").classList.add("hidden");
     $("statusText").textContent = `${world().difficulty} · RUN IN PROGRESS`;
@@ -400,13 +436,13 @@
     updateHUD();
     sound(560, .12);
 
-    // Draw the world immediately, then let the permanent animation loop run.
     last = performance.now();
     render();
   }
 
   function saveProgress() {
     unlocked = Math.max(unlocked, Math.min(5, worldIndex + 2));
+
     try {
       localStorage.setItem("candyDashUnlocked", String(unlocked));
     } catch (_) {}
@@ -426,6 +462,7 @@
 
     if (score > best) {
       best = score;
+
       try {
         localStorage.setItem("candyDashBestV2", String(best));
       } catch (_) {}
@@ -508,8 +545,10 @@
   }
 
   function overlaps(a, b) {
-    return a.x < b.x + b.w && a.x + a.w > b.x &&
-      a.y < b.y + b.h && a.y + a.h > b.y;
+    return a.x < b.x + b.w &&
+      a.x + a.w > b.x &&
+      a.y < b.y + b.h &&
+      a.y + a.h > b.y;
   }
 
   function damage() {
@@ -556,11 +595,14 @@
         player.vx -= 1450 * dt;
         player.face = -1;
       }
+
       if (right) {
         player.vx += 1450 * dt;
         player.face = 1;
       }
+
       if (!left && !right) player.vx *= Math.pow(.001, dt);
+
       player.vx = clamp(player.vx, -310, 310);
     }
 
@@ -595,7 +637,10 @@
       }
     }
 
-    if (player.y > H + 100) damage();
+    if (player.y > H + 100) {
+      damage();
+      if (mode !== "playing") return;
+    }
 
     if (player.dash > 0) {
       player.trail.push({ x: player.x, y: player.y, life: .24 });
@@ -621,6 +666,7 @@
         burst(c.x, c.y, c.type === "star" ? "#ffe77d" : world().color, 10);
         floatText(c.x, c.y, `+${points}`, "#ffe77d");
         sound(c.type === "star" ? 900 : 650, .06);
+
         updateHUD();
       }
     }
@@ -635,6 +681,7 @@
         e.x = e.min;
         e.dir = 1;
       }
+
       if (e.x + e.w > e.max) {
         e.x = e.max - e.w;
         e.dir = -1;
@@ -648,6 +695,7 @@
           if (e.boss) {
             e.hp--;
             player.vy = -450;
+
             burst(e.x + e.w / 2, e.y + 15, "#ffe77d", 20);
 
             if (e.hp <= 0) {
@@ -661,6 +709,7 @@
             e.alive = false;
             player.vy = -420;
             score += 100;
+
             burst(e.x + e.w / 2, e.y + 10, "#ff91d0", 16);
             floatText(e.x, e.y, "+100", "#ffe77d");
             sound(760);
@@ -674,11 +723,18 @@
     }
 
     const boss = enemies.find(e => e.boss);
-    if (player.x > goal.x && (!boss || !boss.alive)) {
+
+    // Finish only when the player lands on the finish platform.
+    if (player.x + player.w >= goal.x && player.grounded && (!boss || !boss.alive)) {
       endGame(true);
+      return;
     }
 
-    camera = mix(camera, clamp(player.x - W * .34, 0, levelWidth - W), Math.min(1, dt * 5));
+    camera = mix(
+      camera,
+      clamp(player.x - W * .34, 0, levelWidth - W),
+      Math.min(1, dt * 5)
+    );
 
     for (const p of particles) {
       p.x += p.vx * dt;
@@ -693,8 +749,10 @@
   function drawBackground() {
     const w = world();
     const g = ctx.createLinearGradient(0, 0, 0, H);
+
     g.addColorStop(0, w.bg1);
     g.addColorStop(1, w.bg2);
+
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, W, H);
 
@@ -706,9 +764,11 @@
       ctx.fillStyle = w.color;
       ctx.fillRect(x, d.y, d.size, d.size);
     }
+
     ctx.globalAlpha = 1;
 
     const mx = 820 - camera * .05;
+
     ctx.save();
     ctx.shadowBlur = 45;
     ctx.shadowColor = w.color;
@@ -744,7 +804,9 @@
       } else if (w.theme === "neon") {
         ctx.fillStyle = "#26124b";
         ctx.fillRect(x, 290 + (i % 4) * 25, 70, 220);
+
         ctx.fillStyle = "#ff55b888";
+
         for (let j = 0; j < 5; j++) {
           ctx.fillRect(x + 12, 310 + j * 22 + (i % 4) * 25, 9, 11);
         }
@@ -760,6 +822,7 @@
         ctx.beginPath();
         ctx.arc(x + 40, 355, 32, 0, Math.PI * 2);
         ctx.fill();
+
         ctx.fillStyle = "#ff9dd9";
         ctx.fillRect(x + 37, 370, 7, 85);
       }
@@ -769,6 +832,7 @@
   function drawPlatform(p) {
     const x = p.x - camera;
     const y = p.y;
+
     if (x + p.w < 0 || x > W) return;
 
     const palettes = {
@@ -800,6 +864,7 @@
   function drawCandy(c) {
     const x = c.x - camera;
     const y = c.y + Math.sin(time * 3 + c.phase) * 5;
+
     if (x < -30 || x > W + 30) return;
 
     ctx.save();
@@ -819,6 +884,7 @@
         const r = i % 2 ? 7 : 15;
         const px = Math.cos(a) * r;
         const py = Math.sin(a) * r;
+
         if (!i) ctx.moveTo(px, py);
         else ctx.lineTo(px, py);
       }
@@ -857,13 +923,13 @@
     ctx.shadowBlur = e.boss ? 25 : 13;
     ctx.shadowColor = e.boss ? "#ff8b45" : world().color;
     ctx.fillStyle = e.boss ? "#853d66" : world().theme === "ice" ? "#58b7db" : "#e958a6";
-
     ctx.beginPath();
     ctx.moveTo(x, y + e.h);
     ctx.quadraticCurveTo(x - 3, y + 4, x + e.w / 2, y);
     ctx.quadraticCurveTo(x + e.w + 3, y + 4, x + e.w, y + e.h);
     ctx.quadraticCurveTo(x + e.w / 2, y + e.h + 6, x, y + e.h);
     ctx.fill();
+
     ctx.shadowBlur = 0;
 
     if (e.boss) {
@@ -1000,25 +1066,41 @@
 
   function drawGoal() {
     const x = goal.x - camera;
+    const y = goal.y;
+
+    if (x < -120 || x > W + 120) return;
 
     ctx.save();
-    ctx.shadowBlur = 18;
+    ctx.shadowBlur = 20;
     ctx.shadowColor = "#ffe77d";
-    round(x, goal.y, 6, 150, 3, "#fff4ff");
+
+    round(x, y, 8, 160, 4, "#fff7ff");
+
+    const flagX = x + 8;
+    const flagY = y + 5;
+    const cell = 13;
+
     ctx.shadowBlur = 0;
 
-    ctx.fillStyle = world().color;
-    ctx.beginPath();
-    ctx.moveTo(x + 6, goal.y + 4);
-    ctx.lineTo(x + 67, goal.y + 22);
-    ctx.lineTo(x + 6, goal.y + 40);
-    ctx.closePath();
-    ctx.fill();
+    for (let row = 0; row < 4; row++) {
+      for (let col = 0; col < 8; col++) {
+        ctx.fillStyle = (row + col) % 2 === 0 ? "#ffffff" : "#28113e";
+        ctx.fillRect(flagX + col * cell, flagY + row * cell, cell, cell);
+      }
+    }
 
     ctx.fillStyle = "#ffe77d";
+    ctx.font = "bold 16px Fredoka";
+    ctx.textAlign = "center";
+    ctx.shadowBlur = 12;
+    ctx.shadowColor = "#ffe77d";
+    ctx.fillText("FINISH!", x + 58, y - 12);
+
+    ctx.shadowBlur = 16;
     ctx.beginPath();
-    ctx.arc(x + 3, goal.y - 4, 9, 0, Math.PI * 2);
+    ctx.arc(x + 4, y - 4, 9, 0, Math.PI * 2);
     ctx.fill();
+
     ctx.restore();
   }
 
@@ -1049,9 +1131,13 @@
 
     ctx.save();
 
-    ctx.fillStyle = world().theme === "ice" ? "#bdefff" :
-      world().theme === "lava" ? "#8f3559" :
-      world().theme === "neon" ? "#281149" : "#d96cb9";
+    ctx.fillStyle = world().theme === "ice"
+      ? "#bdefff"
+      : world().theme === "lava"
+        ? "#8f3559"
+        : world().theme === "neon"
+          ? "#281149"
+          : "#d96cb9";
 
     ctx.fillRect(0, 510, W, H - 510);
 
@@ -1074,8 +1160,7 @@
     ctx.fillText(world().name.toUpperCase(), 20, H - 28);
   }
 
-  // There is exactly ONE permanent animation loop.
-  // Starting a world changes the mode; it does not create duplicate loops.
+  // One permanent animation loop. Starting another world does not create a duplicate loop.
   function frame(now) {
     const dt = Math.min(Math.max((now - last) / 1000, 0), .033);
     last = now;

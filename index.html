@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Candy Dash — Sugar Worlds</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -11,10 +11,7 @@
 <body>
   <main class="app">
     <header class="topbar">
-      <a class="brand" href="#" id="homeBtn">
-        <span class="brand-icon">✳</span>
-        CANDY<span>DASH</span>
-      </a>
+      <a class="brand" href="#" id="homeBtn"><span>✳</span> CANDY<b>DASH</b></a>
       <div class="top-right">
         <div class="best-box">BEST <strong id="bestScore">000000</strong></div>
         <button class="icon-btn" id="soundBtn" aria-label="Toggle sound">♫</button>
@@ -34,18 +31,9 @@
         <canvas id="game" width="1100" height="620"></canvas>
 
         <div class="hud" id="hud">
-          <div class="hud-card">
-            <span class="hud-label">SCORE</span>
-            <strong id="score">000000</strong>
-          </div>
-          <div class="hud-card">
-            <span class="hud-label">CANDIES</span>
-            <strong id="candyCount">00</strong>
-          </div>
-          <div class="hud-card">
-            <span class="hud-label">HEARTS</span>
-            <strong id="lives">♥ ♥ ♥</strong>
-          </div>
+          <div class="hud-card"><span class="hud-label">SCORE</span><strong id="score">000000</strong></div>
+          <div class="hud-card"><span class="hud-label">CANDIES</span><strong id="candyCount">00</strong></div>
+          <div class="hud-card"><span class="hud-label">HEARTS</span><strong id="lives">♥ ♥ ♥</strong></div>
         </div>
 
         <div class="toast" id="toast"></div>
@@ -55,9 +43,7 @@
             <div class="eyebrow">WELCOME TO SUGAR VALLEY</div>
             <h2 class="hero-title">CANDY<br><span>DASH ✳</span></h2>
             <p class="hero-description">A little chaos. A lot of sugar.<br>Your sweetest adventure starts here.</p>
-            <button class="primary-button" id="startBtn">
-              START YOUR ADVENTURE <span>↗</span>
-            </button>
+            <button class="primary-button" id="startBtn">START YOUR ADVENTURE <span>↗</span></button>
             <p class="tiny-note">FIVE WORLDS · FOUR CHARACTERS · ONE SWEET TOAD</p>
           </div>
         </div>
@@ -74,10 +60,10 @@
       </div>
 
       <div class="mobile-controls">
-        <button id="leftBtn" aria-label="Move left">←</button>
-        <button id="rightBtn" aria-label="Move right">→</button>
-        <button id="jumpBtn" aria-label="Jump">JUMP</button>
-        <button id="dashBtn" aria-label="Dash">DASH</button>
+        <button id="leftBtn">←</button>
+        <button id="rightBtn">→</button>
+        <button id="jumpBtn">JUMP</button>
+        <button id="dashBtn">DASH</button>
       </div>
     </section>
 
